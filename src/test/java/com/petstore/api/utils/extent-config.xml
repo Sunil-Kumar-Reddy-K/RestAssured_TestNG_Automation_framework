@@ -1,0 +1,9 @@
+<extentreports>
+    <configuration>
+        <encoding>UTF-8</encoding>
+        <theme>standard</theme>
+        <documentTitle>PetStore API Test Report</documentTitle>
+        <reportName>API Test Report</reportName>
+        <protocol>https</protocol>
+    </configuration>
+</extentreports>
