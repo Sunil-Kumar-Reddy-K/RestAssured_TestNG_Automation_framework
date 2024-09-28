@@ -6,7 +6,10 @@
 
     <test name="PetStore API Tests">
         <classes>
-            <class name="com.petstore.api.tests.PetStoreTests"/>
+            <!-- Post request to create new pet should run first -->
+            <class name="com.petstore.api.tests.PostCreateNewPetTest" />
+            <!-- Get request to fetch the created pet should run second -->
+            <class name="com.petstore.api.tests.GetPetTest" />
         </classes>
     </test>
 </suite>
