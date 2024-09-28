@@ -1,15 +1,12 @@
-name: Java CI with Test Reports
+name: API Tests
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,57 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1  # Make it lightweight by fetching only the latest commit
+          persist-credentials: false
 
-      # Set up Java 21
-      - name: Set up JDK 21
+      # Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'maven' # Caches Maven dependencies
 
-      # Cache Maven dependencies for faster builds
+      # Cache Maven dependencies to improve speed
       - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-maven
 
-      # Build and run tests
-      - name: Build with Maven
-        run: mvn -B clean install
+      # Install dependencies and run tests
+      - name: Install dependencies and run tests
+        run: |
+          mvn clean install
+          mvn test
 
-      # Save test results (Maven Surefire/FailSafe test reports)
+      # Archive test results (HTML report from test-output folder)
       - name: Archive test reports
-        if: always()
+        if: always() # Ensures artifacts are saved even if tests fail
         uses: actions/upload-artifact@v3
         with:
-          name: Test-Reports
-          path: target/surefire-reports/
-
-      # Save test run report as an artifact
-      - name: Save ExtentReports as artifact
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: Extent-Reports
-          path: target/extent-reports/
-
-  # Notify via email or any other mechanism for results (optional)
-  notify:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify via email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.example.com
-          server_port: 465
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: GitHub Actions Test Results
-          body: Test results available for ${{ github.repository }} - ${{ github.run_id }}
-          to: your-email@example.com
-          from: actions@example.com
+          name: test-report
+          path: test-output/
