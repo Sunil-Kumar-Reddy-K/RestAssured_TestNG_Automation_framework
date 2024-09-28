@@ -1,9 +1,13 @@
 name: API Tests
 
+# Trigger the pipeline on PR creation and merging to main branch
 on:
+  pull_request:
+    branches:
+      - main  # Runs when a PR is created for the main branch
   push:
     branches:
-      - main
+      - main  # Runs when a PR is merged into the main branch
 
 jobs:
   run-tests:
