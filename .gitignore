@@ -57,5 +57,4 @@ buildNumber.properties
 
 target
 .idea
-src/test/resources/api-responses
 test-output
